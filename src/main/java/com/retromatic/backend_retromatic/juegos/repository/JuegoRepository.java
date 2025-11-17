@@ -1,8 +1,8 @@
-package com.retromatic.backend_retromatic.repository;
+package com.retromatic.backend_retromatic.juegos.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.retromatic.backend_retromatic.model.Juego;
+import com.retromatic.backend_retromatic.juegos.model.Juego;
 
 public interface JuegoRepository extends JpaRepository<Juego, Long>{
 
