@@ -1,12 +1,12 @@
-package com.retromatic.backend_retromatic.service;
+package com.retromatic.backend_retromatic.juegos.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.retromatic.backend_retromatic.model.Juego;
-import com.retromatic.backend_retromatic.repository.JuegoRepository;
+import com.retromatic.backend_retromatic.juegos.model.Juego;
+import com.retromatic.backend_retromatic.juegos.repository.JuegoRepository;
 
 @Service
 public class JuegoService {

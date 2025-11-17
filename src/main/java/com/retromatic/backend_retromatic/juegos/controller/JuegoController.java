@@ -1,4 +1,4 @@
-package com.retromatic.backend_retromatic.controller;
+package com.retromatic.backend_retromatic.juegos.controller;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.retromatic.backend_retromatic.model.Juego;
-import com.retromatic.backend_retromatic.service.JuegoService;
+import com.retromatic.backend_retromatic.juegos.model.Juego;
+import com.retromatic.backend_retromatic.juegos.service.JuegoService;
 
 
 @RestController
@@ -45,7 +45,7 @@ public class JuegoController {
     public Juego updateJuego(@PathVariable Long id, @RequestBody Juego juego) {
         Juego juegoExistente = juegoService.getJuegoById(id);
         if (juegoExistente != null){
-            juegoExistente.setTitulo(juego.getTitulo());
+            juegoExistente.setTitulo(juego.getTitulo() );
             juegoExistente.setPrecio(juego.getPrecio());
             return juegoService.saveJuego(juegoExistente);
         }

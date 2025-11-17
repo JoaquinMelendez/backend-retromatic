@@ -1,4 +1,4 @@
-package com.retromatic.backend_retromatic.model;
+package com.retromatic.backend_retromatic.juegos.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Juego {
+public class Clasificacion {
     
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
