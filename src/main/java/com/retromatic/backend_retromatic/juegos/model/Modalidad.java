@@ -1,5 +1,6 @@
 package com.retromatic.backend_retromatic.juegos.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +20,7 @@ public class Modalidad {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    private String titulo;
+    @Column
+    private String Nombre;
 
-    private Integer precio;
 }
