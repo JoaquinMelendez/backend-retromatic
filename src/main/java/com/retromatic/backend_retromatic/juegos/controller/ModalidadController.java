@@ -16,7 +16,7 @@ import com.retromatic.backend_retromatic.juegos.service.ModalidadService;
 
 
 @RestController
-@RequestMapping("/api/modalidads")
+@RequestMapping("/api/modalidades")
 //@Tag(name = "Modalidad Management System")
 public class ModalidadController {
 

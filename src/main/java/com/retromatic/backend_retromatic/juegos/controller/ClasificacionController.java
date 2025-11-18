@@ -16,7 +16,7 @@ import com.retromatic.backend_retromatic.juegos.service.ClasificacionService;
 
 
 @RestController
-@RequestMapping("/api/clasificacions")
+@RequestMapping("/api/clasificaciones")
 //@Tag(name = "Clasificacion Management System")
 public class ClasificacionController {
 
