@@ -2,6 +2,8 @@ package com.retromatic.backend_retromatic.juegos.model;
 
 import java.util.List;
 
+import com.retromatic.backend_retromatic.ventas.model.VentaJuego;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +45,9 @@ public class Juego {
 
     @OneToMany(mappedBy="juego")
     private List<JuegoModalidad> modalidades;
+
+    @OneToMany(mappedBy="juego")
+    private List<VentaJuego> ventas;
 
     //Relaciones sin tablas intermedias
     @ManyToOne
