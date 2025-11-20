@@ -33,6 +33,9 @@ public class Juego {
     @Column
     private Integer precio;
 
+    @Column(name = "url_portada")
+    private String urlPortada;
+
     //Relaciones con tablas intermedias
     @OneToMany(mappedBy="juego")
     private List<JuegoCategoria> categorias;

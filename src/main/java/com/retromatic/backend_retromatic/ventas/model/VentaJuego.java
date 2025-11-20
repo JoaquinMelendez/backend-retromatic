@@ -27,6 +27,12 @@ public class VentaJuego{
     @Column
     private String nombre;
 
+    @Column
+    private Integer precio;
+
+    @Column
+    private Integer cantidad;
+
     @ManyToOne
     @JoinColumn(name = "juego_id")
     private Juego juego;
