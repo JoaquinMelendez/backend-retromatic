@@ -1,54 +1,66 @@
 package com.retromatic.backend_retromatic.ventas.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.retromatic.backend_retromatic.ventas.model.Venta;
 import com.retromatic.backend_retromatic.ventas.service.VentaService;
 
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/ventas")
-//@Tag(name = "Venta Management System")
+@RequestMapping("/ventas")
+@RequiredArgsConstructor
 public class VentaController {
 
-    @Autowired
-    private VentaService ventaService;
+    private final VentaService ventaService;
 
-    @GetMapping
-    //@Operation(summary = "Lol")
-    public List<Venta> getAllVentas(){
-        return ventaService.getAllVentas();
+    //GET usuarioId
+    @GetMapping("/carrito/{usuarioId}")
+    public ResponseEntity<Venta> obtenerCarrito(@PathVariable Long usuarioId) {
+        Venta carrito = ventaService.obtenerCarrito(usuarioId);
+        return ResponseEntity.ok(carrito);
     }
 
-    @GetMapping("/id")
-    //Operation()
-    public Venta getVentaById(@PathVariable Long id){
-        return ventaService.getVentaById(id);
+    //POST usuarioId + juegoId 
+    @PostMapping("/carrito/{usuarioId}/agregar/{juegoId}")
+    public ResponseEntity<Venta> agregarJuego(
+            @PathVariable Long usuarioId,
+            @PathVariable Long juegoId
+    ) {
+        Venta carrito = ventaService.agregarJuegoAlCarrito(usuarioId, juegoId);
+        return ResponseEntity.ok(carrito);
     }
 
-    @PostMapping
-    //Operation()
-    public Venta createVenta(@RequestBody Venta venta){
-        return ventaService.saveVenta(venta);
+    //DELETE usuarioId + ventaJuegoId
+    @DeleteMapping("/carrito/{usuarioId}/item/{ventaJuegoId}")
+    public ResponseEntity<Venta> eliminarItem(
+            @PathVariable Long usuarioId,
+            @PathVariable Long ventaJuegoId
+    ) {
+        Venta carrito = ventaService.eliminarItemDeCarrito(usuarioId, ventaJuegoId);
+        return ResponseEntity.ok(carrito);
     }
 
-    @PutMapping("/{id}")
-    public Venta updateVenta(@PathVariable Long id, @RequestBody Venta venta) {
-        Venta ventaExistente = ventaService.getVentaById(id);
-        if (ventaExistente != null){
-            ventaExistente.setTotal(venta.getTotal());
-            ventaExistente.setFechaHora(venta.getFechaHora());
-            return ventaService.saveVenta(ventaExistente);
-        }
-        return null;
+    //DELETE usuarioId
+    @DeleteMapping("/carrito/{usuarioId}")
+    public ResponseEntity<Venta> vaciarCarrito(@PathVariable Long usuarioId) {
+        Venta carrito = ventaService.vaciarCarrito(usuarioId);
+        return ResponseEntity.ok(carrito);
+    }
+
+    //POST usuarioId + metodoPagoId
+    @PostMapping("/carrito/{usuarioId}/confirmar/{metodoPagoId}")
+    public ResponseEntity<Venta> confirmarCarrito(
+            @PathVariable Long usuarioId,
+            @PathVariable Long metodoPagoId
+    ) {
+        Venta venta = ventaService.confirmarCarrito(usuarioId, metodoPagoId);
+        return ResponseEntity.ok(venta);
     }
 }

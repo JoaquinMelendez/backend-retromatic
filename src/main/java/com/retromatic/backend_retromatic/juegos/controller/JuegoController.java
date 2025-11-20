@@ -47,6 +47,7 @@ public class JuegoController {
         if (juegoExistente != null){
             juegoExistente.setTitulo(juego.getTitulo() );
             juegoExistente.setPrecio(juego.getPrecio());
+            juegoExistente.setUrlPortada(juego.getUrlPortada());
             return juegoService.saveJuego(juegoExistente);
         }
         return null;
