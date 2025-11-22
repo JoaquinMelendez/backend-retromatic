@@ -27,9 +27,6 @@ public class Direccion {
     @Column
     private Integer enumeracion;
 
-    @Column
-    private String depto;
-
     @ManyToOne
     @JoinColumn(name = "comuna_id")
     private Comuna comuna;
