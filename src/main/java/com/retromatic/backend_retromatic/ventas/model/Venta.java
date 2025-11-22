@@ -1,6 +1,7 @@
 package com.retromatic.backend_retromatic.ventas.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.retromatic.backend_retromatic.usuarios.model.Usuario;
@@ -42,7 +43,7 @@ public class Venta {
     private MetodoPago metodoPago;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VentaJuego> juegos;
+    private List<VentaJuego> juegos = new ArrayList<>();
 
     @Column
     private Integer total;
