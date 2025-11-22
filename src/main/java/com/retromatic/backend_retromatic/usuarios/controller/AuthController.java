@@ -24,6 +24,8 @@ public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final ComunaRepository comunaRepository;
+    private final DireccionRepository direccionRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -71,6 +73,20 @@ public class AuthController {
         nuevo.setRol(rolPorDefecto);
 
         Usuario guardado = usuarioRepository.save(nuevo);
+
+        if (request.getComunaId() != null && request.getDireccion() != null
+                && !request.getDireccion().isBlank()) {
+
+            Comuna comuna = comunaRepository.findById(request.getComunaId())
+                    .orElseThrow(() -> new RuntimeException("Comuna no encontrada"));
+
+            Direccion dir = new Direccion();
+            dir.setDescripcion(request.getDireccion());
+            dir.setComuna(comuna);
+            dir.setUsuario(guardado);
+
+            direccionRepository.save(dir);
+        }
 
         LoginResponse response = new LoginResponse(
                 guardado.getId(),
