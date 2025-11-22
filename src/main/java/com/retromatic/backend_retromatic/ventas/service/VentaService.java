@@ -1,9 +1,9 @@
 package com.retromatic.backend_retromatic.ventas.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.retromatic.backend_retromatic.juegos.model.Juego;
 import com.retromatic.backend_retromatic.juegos.repository.JuegoRepository;
@@ -26,101 +26,161 @@ public class VentaService {
 
     private final VentaRepository ventaRepository;
     private final VentaJuegoRepository ventaJuegoRepository;
-    private final EstadoRepository estadoRepository;
-    private final MetodoPagoRepository metodoPagoRepository;
     private final UsuarioRepository usuarioRepository;
     private final JuegoRepository juegoRepository;
+    private final EstadoRepository estadoRepository;
+    private final MetodoPagoRepository metodoPagoRepository;
 
-    public Venta obtenerOCrearCarrito(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    private static final String ESTADO_PENDIENTE = "PENDIENTE";
+    private static final String ESTADO_PAGADO = "PAGADO";
 
-        Estado estadoCarrito = estadoRepository.findByNombre("CARRITO")
-                .orElseThrow(() -> new RuntimeException("Problema en el CARRITO"));
+    // Obtener carrito activo
+    @Transactional(readOnly = true)
+    public Venta obtenerCarrito(Long usuarioId) {
+        return ventaRepository
+                .findByUsuarioIdAndEstadoNombre(usuarioId, ESTADO_PENDIENTE)
+                .orElseGet(() -> {
+                    // Si no tiene carrito, devolvemos uno vacío "virtual" (no guardado)
+                    Venta v = new Venta();
+                    v.setTotal(0);
+                    return v;
+                });
+    }
+
+    // Obtener o crear carrito activo
+    @Transactional
+    protected Venta obtenerOCrearCarrito(Long usuarioId) {
 
         return ventaRepository
-                .findByUsuarioIdAndEstadoNombre(usuarioId, "CARRITO")
+                .findByUsuarioIdAndEstadoNombre(usuarioId, ESTADO_PENDIENTE)
                 .orElseGet(() -> {
+                    Usuario usuario = usuarioRepository.findById(usuarioId)
+                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+                    Estado estadoPendiente = estadoRepository.findByNombre(ESTADO_PENDIENTE)
+                            .orElseThrow(() -> new RuntimeException("Estado PENDIENTE no configurado"));
+
                     Venta nueva = new Venta();
                     nueva.setUsuario(usuario);
-                    nueva.setEstado(estadoCarrito);
-                    nueva.setJuegos(new ArrayList<>());
+                    nueva.setEstado(estadoPendiente);
                     nueva.setTotal(0);
-                    nueva.setFechaHora(LocalDateTime.now());
+                    nueva.setFechaHora(null); // solo se setea al confirmar
+
                     return ventaRepository.save(nueva);
                 });
     }
 
-    public Venta obtenerCarrito(Long usuarioId) {
-        return obtenerOCrearCarrito(usuarioId);
-    }
-
+    // Agregar juego al carrito
+    @Transactional
     public Venta agregarJuegoAlCarrito(Long usuarioId, Long juegoId) {
+
         Venta carrito = obtenerOCrearCarrito(usuarioId);
 
         Juego juego = juegoRepository.findById(juegoId)
                 .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
 
-        VentaJuego item = new VentaJuego();
-        item.setVenta(carrito);
-        item.setJuego(juego);
-        item.setNombre(juego.getTitulo());
+        VentaJuego ventaJuego = ventaJuegoRepository
+                .findByVentaIdAndJuegoId(carrito.getId(), juegoId)
+                .orElse(null);
 
-        ventaJuegoRepository.save(item);
+        if (ventaJuego == null) {
+            ventaJuego = new VentaJuego();
+            ventaJuego.setVenta(carrito);
+            ventaJuego.setJuego(juego);
+            ventaJuego.setPrecio(juego.getPrecio());
+            ventaJuego.setCantidad(1);
 
-        int total = carrito.getJuegos().stream()
-                .map(vj -> vj.getJuego().getPrecio())
-                .mapToInt(Integer::intValue)
-                .sum();
+        } else {
+            ventaJuego.setCantidad(ventaJuego.getCantidad() + 1);
+        }
 
-        carrito.setTotal(total);
+        ventaJuegoRepository.save(ventaJuego);
+
+        if (!carrito.getJuegos().contains(ventaJuego)) {
+            carrito.getJuegos().add(ventaJuego);
+        }
+
+        recalcularTotal(carrito);
         return ventaRepository.save(carrito);
     }
 
+    // Eliminar ítem del carrito
+    @Transactional
     public Venta eliminarItemDeCarrito(Long usuarioId, Long ventaJuegoId) {
+
         Venta carrito = obtenerOCrearCarrito(usuarioId);
 
-        VentaJuego item = ventaJuegoRepository.findById(ventaJuegoId)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+        VentaJuego ventaJuego = ventaJuegoRepository.findById(ventaJuegoId)
+                .orElseThrow(() -> new RuntimeException("Item de carrito no encontrado"));
 
-        if (!item.getVenta().getId().equals(carrito.getId())) {
+        if (ventaJuego.getVenta() == null || !ventaJuego.getVenta().getId().equals(carrito.getId())) {
             throw new RuntimeException("El item no pertenece al carrito del usuario");
         }
 
-        ventaJuegoRepository.delete(item);
+        carrito.getJuegos().remove(ventaJuego);
+        ventaJuegoRepository.delete(ventaJuego);
 
-        int total = carrito.getJuegos().stream()
-                .map(vj -> vj.getJuego().getPrecio())
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        carrito.setTotal(total);
+        recalcularTotal(carrito);
         return ventaRepository.save(carrito);
     }
 
+    // Vaciar carrito
+    @Transactional
     public Venta vaciarCarrito(Long usuarioId) {
+
         Venta carrito = obtenerOCrearCarrito(usuarioId);
 
-        ventaJuegoRepository.deleteAll(carrito.getJuegos());
+        // Eliminar todos los items
+        for (VentaJuego vj : carrito.getJuegos()) {
+            ventaJuegoRepository.delete(vj);
+        }
         carrito.getJuegos().clear();
-        carrito.setTotal(0);
 
+        carrito.setTotal(0);
         return ventaRepository.save(carrito);
     }
 
+    // Confirmar carrito (simular compra)
+    @Transactional
     public Venta confirmarCarrito(Long usuarioId, Long metodoPagoId) {
-        Venta carrito = obtenerOCrearCarrito(usuarioId);
 
-        Estado estadoPendiente = estadoRepository.findByNombre("PAGADA")
-                .orElseThrow(() -> new RuntimeException("Estado 'PAGADA' no configurado"));
+        Venta carrito = ventaRepository
+                .findByUsuarioIdAndEstadoNombre(usuarioId, ESTADO_PENDIENTE)
+                .orElseThrow(() -> new RuntimeException("No hay carrito activo para el usuario"));
+
+        if (carrito.getJuegos() == null || carrito.getJuegos().isEmpty()) {
+            throw new RuntimeException("El carrito está vacío");
+        }
 
         MetodoPago metodoPago = metodoPagoRepository.findById(metodoPagoId)
                 .orElseThrow(() -> new RuntimeException("Método de pago no encontrado"));
 
-        carrito.setEstado(estadoPendiente);
+        Estado estadoPagado = estadoRepository.findByNombre(ESTADO_PAGADO)
+                .orElseThrow(() -> new RuntimeException("Estado PAGADO no configurado"));
+
         carrito.setMetodoPago(metodoPago);
+        carrito.setEstado(estadoPagado);
         carrito.setFechaHora(LocalDateTime.now());
 
+        recalcularTotal(carrito);
+
         return ventaRepository.save(carrito);
+    }
+
+    private void recalcularTotal(Venta venta) {
+        if (venta.getJuegos() == null || venta.getJuegos().isEmpty()) {
+            venta.setTotal(0);
+            return;
+        }
+
+        int total = venta.getJuegos().stream()
+                .mapToInt(vj -> {
+                    Integer precio = vj.getPrecio() != null ? vj.getPrecio() : 0;
+                    Integer cant = vj.getCantidad() != null ? vj.getCantidad() : 0;
+                    return precio * cant;
+                })
+                .sum();
+
+        venta.setTotal(total);
     }
 }
