@@ -7,15 +7,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.retromatic.backend_retromatic.usuarios.model.Comuna;
+import com.retromatic.backend_retromatic.usuarios.model.Direccion;
 import com.retromatic.backend_retromatic.usuarios.model.LoginRequest;
 import com.retromatic.backend_retromatic.usuarios.model.LoginResponse;
 import com.retromatic.backend_retromatic.usuarios.model.RegisterRequest;
 import com.retromatic.backend_retromatic.usuarios.model.Rol;
 import com.retromatic.backend_retromatic.usuarios.model.Usuario;
-import com.retromatic.backend_retromatic.usuarios.repository.RolRepository;
-import com.retromatic.backend_retromatic.usuarios.repository.UsuarioRepository;
 import com.retromatic.backend_retromatic.usuarios.repository.ComunaRepository;
 import com.retromatic.backend_retromatic.usuarios.repository.DireccionRepository;
+import com.retromatic.backend_retromatic.usuarios.repository.RolRepository;
+import com.retromatic.backend_retromatic.usuarios.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -83,7 +85,7 @@ public class AuthController {
                     .orElseThrow(() -> new RuntimeException("Comuna no encontrada"));
 
             Direccion dir = new Direccion();
-            dir.setDescripcion(request.getDireccion());
+            dir.setDireccion(request.getDireccion());
             dir.setComuna(comuna);
             dir.setUsuario(guardado);
 
