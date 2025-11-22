@@ -14,6 +14,8 @@ import com.retromatic.backend_retromatic.usuarios.model.Rol;
 import com.retromatic.backend_retromatic.usuarios.model.Usuario;
 import com.retromatic.backend_retromatic.usuarios.repository.RolRepository;
 import com.retromatic.backend_retromatic.usuarios.repository.UsuarioRepository;
+import com.retromatic.backend_retromatic.usuarios.repository.ComunaRepository;
+import com.retromatic.backend_retromatic.usuarios.repository.DireccionRepository;
 
 import lombok.RequiredArgsConstructor;
 
