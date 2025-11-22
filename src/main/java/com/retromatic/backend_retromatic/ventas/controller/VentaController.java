@@ -1,5 +1,7 @@
 package com.retromatic.backend_retromatic.ventas.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,5 +64,19 @@ public class VentaController {
     ) {
         Venta venta = ventaService.confirmarCarrito(usuarioId, metodoPagoId);
         return ResponseEntity.ok(venta);
+    }
+
+    @PostMapping("/carrito/{usuarioId}/item/{ventaJuegoId}/decrementar")
+    public ResponseEntity<Venta> decrementarItem(
+            @PathVariable Long usuarioId,
+            @PathVariable Long ventaJuegoId
+    ) {
+        Venta carrito = ventaService.decrementarCantidadEnCarrito(usuarioId, ventaJuegoId);
+        return ResponseEntity.ok(carrito);
+    }
+    @GetMapping("/pagadas")
+    public ResponseEntity<List<Venta>> obtenerVentasPagadas() {
+        List<Venta> ventas = ventaService.obtenerVentasPagadas();
+        return ResponseEntity.ok(ventas);
     }
 }

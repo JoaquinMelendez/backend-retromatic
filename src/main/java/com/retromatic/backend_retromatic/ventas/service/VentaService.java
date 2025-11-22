@@ -1,6 +1,7 @@
 package com.retromatic.backend_retromatic.ventas.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,12 @@ public class VentaService {
                     v.setTotal(0);
                     return v;
                 });
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<Venta> obtenerVentasPagadas() {
+        return ventaRepository.findByEstadoNombre("PAGADO");
     }
 
     // Obtener o crear carrito activo
@@ -183,4 +190,36 @@ public class VentaService {
 
         venta.setTotal(total);
     }
+
+    @Transactional
+    public Venta decrementarCantidadEnCarrito(Long usuarioId, Long ventaJuegoId) {
+
+        Venta carrito = obtenerOCrearCarrito(usuarioId);
+
+        VentaJuego ventaJuego = ventaJuegoRepository.findById(ventaJuegoId)
+                .orElseThrow(() -> new RuntimeException("Item de carrito no encontrado"));
+
+        if (ventaJuego.getVenta() == null || !ventaJuego.getVenta().getId().equals(carrito.getId())) {
+            throw new RuntimeException("El item no pertenece al carrito del usuario");
+        }
+
+        Integer cantidadActual = ventaJuego.getCantidad() != null ? ventaJuego.getCantidad() : 0;
+
+        if (cantidadActual <= 1) {
+            carrito.getJuegos().remove(ventaJuego);
+            ventaJuegoRepository.delete(ventaJuego);
+        } else {
+            ventaJuego.setCantidad(cantidadActual - 1);
+            ventaJuegoRepository.save(ventaJuego);
+
+            if (!carrito.getJuegos().contains(ventaJuego)) {
+                carrito.getJuegos().add(ventaJuego);
+            }
+        }
+
+        recalcularTotal(carrito);
+        return ventaRepository.save(carrito);
+    }
+
+
 }
