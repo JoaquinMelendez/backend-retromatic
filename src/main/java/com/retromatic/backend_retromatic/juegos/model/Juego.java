@@ -31,6 +31,9 @@ public class Juego {
     private String titulo;
 
     @Column
+    private String descripcion;
+
+    @Column
     private Integer precio;
 
     @Column(name = "url_portada")
