@@ -47,7 +47,6 @@ public class DireccionController {
         if (direccionExistente != null){
             direccionExistente.setDireccion(direccion.getDireccion() );
             direccionExistente.setEnumeracion(direccion.getEnumeracion());
-            direccionExistente.setDepto(direccion.getDepto());
             return direccionService.saveDireccion(direccionExistente);
         }
         return null;
