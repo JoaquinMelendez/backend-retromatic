@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.retromatic.backend_retromatic.juegos.model.Juego;
@@ -59,6 +60,23 @@ public class JuegoController {
     public ResponseEntity<Void> deleteJuego(@PathVariable Long id) {
         juegoService.deleteJuego(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/filtrar")
+    public List<Juego> filtrarJuegos(
+            @RequestParam(required = false) Long companniaId,
+            @RequestParam(required = false) Long plataformaId,
+            @RequestParam(required = false) Long modalidadId,
+            @RequestParam(required = false) Long categoriaId,
+            @RequestParam(required = false) Long clasificacionId
+    ) {
+        return juegoService.filtrarJuegos(
+                companniaId,
+                plataformaId,
+                modalidadId,
+                categoriaId,
+                clasificacionId
+        );
     }
 }
 
