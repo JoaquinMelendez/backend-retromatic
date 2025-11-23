@@ -19,11 +19,17 @@ import com.retromatic.backend_retromatic.usuarios.repository.DireccionRepository
 import com.retromatic.backend_retromatic.usuarios.repository.RolRepository;
 import com.retromatic.backend_retromatic.usuarios.repository.UsuarioRepository;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/v1/api/auth")
 @RequiredArgsConstructor
+@Tag(
+    name = "Autenticación",
+    description = "Endpoints para registro e inicio de sesión de usuarios"
+)
 public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
@@ -32,6 +38,13 @@ public class AuthController {
     private final DireccionRepository direccionRepository;
 
     @PostMapping("/login")
+    @Operation(
+        summary = "Iniciar sesión",
+        description = """
+            Permite a un usuario iniciar sesión mediante correo y contraseña.
+            Retorna información básica del usuario si las credenciales son correctas.
+            """
+    )
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
         Usuario usuario = usuarioRepository.findByCorreo(request.getCorreo());
@@ -58,6 +71,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(
+        summary = "Registrar un nuevo usuario",
+        description = """
+            Crea un usuario con rol CLIENTE por defecto.
+            Opcionalmente guarda una dirección asociada si se envía comunaId y direccion.
+            Retorna los datos del usuario recién creado.
+            """
+    )
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
         Usuario existente = usuarioRepository.findByCorreo(request.getCorreo());

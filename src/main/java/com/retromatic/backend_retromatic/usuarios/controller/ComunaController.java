@@ -14,34 +14,53 @@ import org.springframework.web.bind.annotation.RestController;
 import com.retromatic.backend_retromatic.usuarios.model.Comuna;
 import com.retromatic.backend_retromatic.usuarios.service.ComunaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
-@RequestMapping("/api/comunas")
-//@Tag(name = "Comuna Management System")
+@RequestMapping("/v1/api/comunas")
+@Tag(
+    name = "Comunas",
+    description = "Operaciones para gestionar comunas asociadas a direcciones de usuarios"
+)
 public class ComunaController {
 
     @Autowired
     private ComunaService comunaService;
 
     @GetMapping
-    //@Operation(summary = "Lol")
+    @Operation(
+        summary = "Obtener todas las comunas",
+        description = "Retorna una lista con todas las comunas registradas en el sistema."
+    )
     public List<Comuna> getAllComunas(){
         return comunaService.getAllComunas();
     }
 
     @GetMapping("/id")
-    //Operation()
+    @Operation(
+        summary = "Obtener comuna por ID",
+        description = "Retorna una comuna específica según su identificador."
+    )
     public Comuna getComunaById(@PathVariable Long id){
         return comunaService.getComunaById(id);
     }
 
     @PostMapping
-    //Operation()
+    @Operation(
+        summary = "Crear nueva comuna",
+        description = "Permite registrar una nueva comuna en el sistema."
+    )
     public Comuna createComuna(@RequestBody Comuna comuna){
         return comunaService.saveComuna(comuna);
     }
 
     @PutMapping("/{id}")
+    @Operation(
+        summary = "Actualizar una comuna existente",
+        description = "Modifica los datos de una comuna ya registrada mediante su ID."
+    )
     public Comuna updateComuna(@PathVariable Long id, @RequestBody Comuna comuna) {
         Comuna comunaExistente = comunaService.getComunaById(id);
         if (comunaExistente != null){
