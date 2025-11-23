@@ -54,8 +54,8 @@ El registro contempla las siguientes entradas:
 
 #### Endpoint
 ```
-POST /auth/register
-https://backend-retromatic.onrender.com/auth/register
+POST /v1/api/auth/register
+https://backend-retromatic.onrender.com/v1/api/auth/register
 ```
 
 #### Request Body (JSON)
@@ -84,8 +84,8 @@ Recibe:
 
 #### Endpoint
 ```
-POST /auth/login
-https://backend-retromatic.onrender.com/auth/login
+POST /v1/api/auth/login
+https://backend-retromatic.onrender.com/v1/api/auth/login
 ```
 
 #### Request Body (JSON)
@@ -163,8 +163,8 @@ companiaIds      List<Long>
 
 ## Endpoint
 ```
-POST /juegos
-https://backend-retromatic.onrender.com/juegos
+POST /v1/api/juegos
+https://backend-retromatic.onrender.com/v1/api/juegos
 ```
 
 ## Request Body (JSON)
@@ -200,12 +200,12 @@ https://backend-retromatic.onrender.com/juegos
 
 ## Endpoint
 ```
-PUT /juegos/{id}
+PUT /v1/api/juegos/{id}
 ```
 
 ## Ejemplo
 ```
-PUT /juegos/10
+PUT /v1/api/juegos/10
 ```
 
 ## Request Body (JSON)
@@ -238,12 +238,12 @@ PUT /juegos/10
 
 ## Endpoint
 ```
-DELETE /juegos/{id}
+DELETE /v1/api/juegos/{id}
 ```
 
 ## Ejemplo
 ```
-DELETE /juegos/10
+DELETE /v1/api/juegos/10
 ```
 
 ## Response 204 NO CONTENT
@@ -255,7 +255,7 @@ Sin contenido en la respuesta.
 
 ## Endpoint
 ```
-GET /juegos
+GET /v1/api/juegos
 ```
 
 ## Response 200 OK
@@ -281,12 +281,12 @@ GET /juegos
 
 ## Endpoint
 ```
-GET /juegos/{id}
+GET /v1/api/juegos/{id}
 ```
 
 ## Ejemplo
 ```
-GET /juegos/2
+GET /v1/api/juegos/2
 ```
 
 ## Response 200 OK
@@ -339,7 +339,7 @@ Cuando se confirma la compra:
 
 ### Endpoint
 ```
-GET /ventas/carrito/{usuarioId}
+GET /v1/api/ventas/carrito/{usuarioId}
 ```
 
 ### Ejemplo de respuesta
@@ -365,7 +365,7 @@ GET /ventas/carrito/{usuarioId}
 
 ### Endpoint
 ```
-POST /ventas/carrito/{usuarioId}/agregar/{juegoId}
+POST /v1/api/ventas/carrito/{usuarioId}/agregar/{juegoId}
 ```
 
 ---
@@ -374,7 +374,7 @@ POST /ventas/carrito/{usuarioId}/agregar/{juegoId}
 
 ### Endpoint
 ```
-POST /ventas/carrito/{usuarioId}/item/{ventaJuegoId}/decrementar
+POST /v1/api/ventas/carrito/{usuarioId}/item/{ventaJuegoId}/decrementar
 ```
 ---
 
@@ -382,7 +382,7 @@ POST /ventas/carrito/{usuarioId}/item/{ventaJuegoId}/decrementar
 
 ### Endpoint
 ```
-DELETE /ventas/carrito/{usuarioId}/item/{ventaJuegoId}
+DELETE /v1/api/ventas/carrito/{usuarioId}/item/{ventaJuegoId}
 ```
 
 ---
@@ -391,7 +391,7 @@ DELETE /ventas/carrito/{usuarioId}/item/{ventaJuegoId}
 
 ### Endpoint
 ```
-DELETE /ventas/carrito/{usuarioId}
+DELETE /v1/api/ventas/carrito/{usuarioId}
 ```
 
 ---
@@ -400,7 +400,7 @@ DELETE /ventas/carrito/{usuarioId}
 
 ### Endpoint
 ```
-POST /ventas/carrito/{usuarioId}/confirmar/{metodoPagoId}
+POST /v1/api/ventas/carrito/{usuarioId}/confirmar/{metodoPagoId}
 ```
 
 ### Ejemplo de respuesta
@@ -428,7 +428,7 @@ POST /ventas/carrito/{usuarioId}/confirmar/{metodoPagoId}
 ## 7. Registro de ventas para el administrador
 
 ```
-GET /ventas/pagadas
+GET /v1/api/ventas/pagadas
 ```
 
 Devuelve
@@ -469,7 +469,7 @@ Devuelve
 
 ## 8. Cálculo del total de la venta
 ```
-GET /ventas/carrito/{usuarioId}
+GET /v1/api/ventas/carrito/{usuarioId}
 ```
 
 Devuelve:
@@ -527,8 +527,8 @@ Cada parámetro corresponde a un ID de la tabla asociada.
 ## Endpoint
 
 ```
-GET /juegos/filtrar
-https://backend-retromatic.onrender.com/juegos/filtrar
+GET /v1/api/juegos/filtrar
+https://backend-retromatic.onrender.com/v1/api/juegos/filtrar
 ```
 
 ---
@@ -537,21 +537,21 @@ https://backend-retromatic.onrender.com/juegos/filtrar
 
 ### Sin filtros (trae todos los juegos)
 ```
-GET /juegos/filtrar
+GET /v1/api/juegos/filtrar
 ```
 
 ---
 
 ### Filtrar por Compañía
 ```
-GET /juegos/filtrar?companniaId=1
+GET /v1/api/juegos/filtrar?companniaId=1
 ```
 
 ---
 
 ### Filtrar por Plataforma
 ```
-GET /juegos/filtrar?plataformaId=2
+GET /v1/api/juegos/filtrar?plataformaId=2
 ```
 
 ---
@@ -560,17 +560,15 @@ GET /juegos/filtrar?plataformaId=2
 (Devuelve SOLO juegos que cumplan ambos filtros)
 
 ```
-GET /juegos/filtrar?companniaId=1&plataformaId=2
+GET /v1/api/juegos/filtrar?companniaId=1&plataformaId=2
 ```
 
 ---
 
 ### Filtro más complejo (3 parámetros)
 ```
-GET /juegos/filtrar?modalidadId=3&categoriaId=4&clasificacionId=1
+GET /v1/api/juegos/filtrar?modalidadId=3&categoriaId=4&clasificacionId=1
 ```
-
-Todos los parámetros son opcionales → se combinan con **AND** (intersección).
 
 ---
 
@@ -614,14 +612,6 @@ Problema con BBDD o error inesperado.
 ```
 
 ---
-
-## Notas Importantes
-
-* **Puedes combinar los filtros en cualquier orden**, todos son opcionales.  
-* **Si envías más de un parámetro**, el backend hace una **intersección**, es decir:  
-  → “Dame juegos que cumplan TODOS los filtros seleccionados.”  
-* Si no se envía ningún filtro → se devuelven **todos los juegos**.  
-* El endpoint fue diseñado para que el frontend pueda activar/desactivar filtros fácilmente.
 
 
 #Datos base
@@ -687,7 +677,7 @@ ID | Nombre
 2  | offline
 ```
 
-### modalidad
+### plataforma
 ```
 ID | Nombre
 ------------------------
