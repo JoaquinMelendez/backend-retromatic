@@ -1,6 +1,9 @@
 package com.retromatic.backend_retromatic.juegos.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -232,6 +235,93 @@ public class JuegoService {
         juegoCompanniaRepository.deleteByJuego(juego);
 
         juegoRepository.delete(juego);
+    }
+
+    public List<Juego> obtenerPorCompannia(Long companniaId) {
+        return juegoRepository.findByCompanniaId(companniaId);
+    }
+
+    public List<Juego> obtenerPorPlataforma(Long plataformaId) {
+        return juegoRepository.findByPlataformaId(plataformaId);
+    }
+
+    public List<Juego> obtenerPorModalidad(Long modalidadId) {
+        return juegoRepository.findByModalidadId(modalidadId);
+    }
+
+    public List<Juego> obtenerPorCategoria(Long categoriaId) {
+        return juegoRepository.findByCategoriaId(categoriaId);
+    }
+
+    public List<Juego> obtenerPorClasificacion(Long clasificacionId) {
+        return juegoRepository.findByClasificacionId(clasificacionId);
+    }
+
+    public List<Juego> filtrarJuegos(
+            Long companniaId,
+            Long plataformaId,
+            Long modalidadId,
+            Long categoriaId,
+            Long clasificacionId
+    ) {
+        // Si no se pasa ningún filtro, devolvemos todo
+        if (companniaId == null &&
+            plataformaId == null &&
+            modalidadId == null &&
+            categoriaId == null &&
+            clasificacionId == null) {
+            return juegoRepository.findAll();
+        }
+
+        // Usamos un Set para ir intersectando resultados
+        Set<Juego> resultado = null;
+
+        if (companniaId != null) {
+            List<Juego> porCompannia = juegoRepository.findByCompanniaId(companniaId);
+            resultado = new HashSet<>(porCompannia);
+        }
+
+        if (plataformaId != null) {
+            List<Juego> porPlataforma = juegoRepository.findByPlataformaId(plataformaId);
+            if (resultado == null) {
+                resultado = new HashSet<>(porPlataforma);
+            } else {
+                resultado.retainAll(porPlataforma); // intersección
+            }
+        }
+
+        if (modalidadId != null) {
+            List<Juego> porModalidad = juegoRepository.findByModalidadId(modalidadId);
+            if (resultado == null) {
+                resultado = new HashSet<>(porModalidad);
+            } else {
+                resultado.retainAll(porModalidad);
+            }
+        }
+
+        if (categoriaId != null) {
+            List<Juego> porCategoria = juegoRepository.findByCategoriaId(categoriaId);
+            if (resultado == null) {
+                resultado = new HashSet<>(porCategoria);
+            } else {
+                resultado.retainAll(porCategoria);
+            }
+        }
+
+        if (clasificacionId != null) {
+            List<Juego> porClasificacion = juegoRepository.findByClasificacionId(clasificacionId);
+            if (resultado == null) {
+                resultado = new HashSet<>(porClasificacion);
+            } else {
+                resultado.retainAll(porClasificacion);
+            }
+        }
+
+        if (resultado == null) {
+            return juegoRepository.findAll();
+        }
+
+        return new ArrayList<>(resultado);
     }
 
 }
