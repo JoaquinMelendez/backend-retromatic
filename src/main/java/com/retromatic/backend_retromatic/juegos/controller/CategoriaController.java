@@ -14,34 +14,50 @@ import org.springframework.web.bind.annotation.RestController;
 import com.retromatic.backend_retromatic.juegos.model.Categoria;
 import com.retromatic.backend_retromatic.juegos.service.CategoriaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
-@RequestMapping("/api/categorias")
-//@Tag(name = "Categoria Management System")
+@RequestMapping("v1/api/categorias")
+@Tag(name = "Categorías", description = "Operaciones para gestionar categorías de juegos")
 public class CategoriaController {
 
     @Autowired
     private CategoriaService categoriaService;
 
     @GetMapping
-    //@Operation(summary = "Lol")
+    @Operation(
+        summary = "Obtener todas las categorías",
+        description = "Retorna una lista con todas las categorías registradas en el sistema."
+    )
     public List<Categoria> getAllCategorias(){
         return categoriaService.getAllCategorias();
     }
 
     @GetMapping("/id")
-    //Operation()
+    @Operation(
+        summary = "Buscar categoría por ID",
+        description = "Retorna una única categoría según su identificador."
+    )
     public Categoria getCategoriaById(@PathVariable Long id){
         return categoriaService.getCategoriaById(id);
     }
 
     @PostMapping
-    //Operation()
+    @Operation(
+        summary = "Crear nueva categoría",
+        description = "Permite registrar una nueva categoría en el sistema."
+    )
     public Categoria createCategoria(@RequestBody Categoria categoria){
         return categoriaService.saveCategoria(categoria);
     }
 
     @PutMapping("/{id}")
+    @Operation(
+        summary = "Actualizar una categoría existente",
+        description = "Actualiza los datos de una categoría ya registrada mediante su ID."
+    )
     public Categoria updateCategoria(@PathVariable Long id, @RequestBody Categoria categoria) {
         Categoria categoriaExistente = categoriaService.getCategoriaById(id);
         if (categoriaExistente != null){

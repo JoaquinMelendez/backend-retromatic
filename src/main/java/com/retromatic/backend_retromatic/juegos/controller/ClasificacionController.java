@@ -14,34 +14,53 @@ import org.springframework.web.bind.annotation.RestController;
 import com.retromatic.backend_retromatic.juegos.model.Clasificacion;
 import com.retromatic.backend_retromatic.juegos.service.ClasificacionService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
-@RequestMapping("/api/clasificaciones")
-//@Tag(name = "Clasificacion Management System")
+@RequestMapping("v1/api/clasificaciones")
+@Tag(
+    name = "Clasificaciones",
+    description = "Operaciones para gestionar clasificaciones de edad de los juegos"
+)
 public class ClasificacionController {
 
     @Autowired
     private ClasificacionService clasificacionService;
 
     @GetMapping
-    //@Operation(summary = "Lol")
+    @Operation(
+        summary = "Obtener todas las clasificaciones",
+        description = "Retorna una lista con todas las clasificaciones registradas en el sistema."
+    )
     public List<Clasificacion> getAllClasificacions(){
         return clasificacionService.getAllClasificaciones();
     }
 
     @GetMapping("/id")
-    //Operation()
+    @Operation(
+        summary = "Buscar clasificación por ID",
+        description = "Retorna una única clasificación según su identificador."
+    )
     public Clasificacion getClasificacionById(@PathVariable Long id){
         return clasificacionService.getClasificacionById(id);
     }
 
     @PostMapping
-    //Operation()
+    @Operation(
+        summary = "Crear nueva clasificación",
+        description = "Permite registrar una nueva clasificación de edad en el sistema."
+    )
     public Clasificacion createClasificacion(@RequestBody Clasificacion clasificacion){
         return clasificacionService.saveClasificacion(clasificacion);
     }
 
     @PutMapping("/{id}")
+    @Operation(
+        summary = "Actualizar una clasificación existente",
+        description = "Actualiza los datos de una clasificación ya registrada mediante su ID."
+    )
     public Clasificacion updateClasificacion(@PathVariable Long id, @RequestBody Clasificacion clasificacion) {
         Clasificacion clasificacionExistente = clasificacionService.getClasificacionById(id);
         if (clasificacionExistente != null){
