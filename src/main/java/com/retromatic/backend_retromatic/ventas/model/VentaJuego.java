@@ -1,5 +1,6 @@
 package com.retromatic.backend_retromatic.ventas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retromatic.backend_retromatic.juegos.model.Juego;
 
 import jakarta.persistence.Column;
@@ -39,6 +40,7 @@ public class VentaJuego{
 
     @ManyToOne
     @JoinColumn(name = "venta_id")
+    @JsonIgnore
     private Venta venta;
 
 }
