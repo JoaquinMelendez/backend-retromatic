@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/resources/a.properties
+src/main/resources/application copy.properties
+src/main/resources/application.properties
+src/main/resources/data.sql
+src/main/resources/application.properties
+src/main/resources/application copy.properties

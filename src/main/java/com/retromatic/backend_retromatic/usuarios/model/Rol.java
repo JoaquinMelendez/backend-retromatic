@@ -2,6 +2,8 @@ package com.retromatic.backend_retromatic.usuarios.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ public class Rol {
     private String nombre;
 
     @OneToMany(mappedBy="rol")
+    @JsonIgnore
     private List<Usuario> usuarios;
 }
 
