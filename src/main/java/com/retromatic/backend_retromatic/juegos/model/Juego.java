@@ -2,6 +2,7 @@ package com.retromatic.backend_retromatic.juegos.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retromatic.backend_retromatic.ventas.model.VentaJuego;
 
 import jakarta.persistence.Column;
@@ -53,6 +54,7 @@ public class Juego {
     private List<JuegoModalidad> modalidades;
 
     @OneToMany(mappedBy="juego")
+    @JsonIgnore
     private List<VentaJuego> ventas;
 
     //Relaciones sin tablas intermedias
