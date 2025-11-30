@@ -17,8 +17,8 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                             "http://localhost:5173",
-                            "https://backend-retromatic.onrender.com"
-                            // URL FUTURA DEL FRONT
+                            "https://backend-retromatic.onrender.com",
+                            "https://retromatic.vercel.app/"
                         )
                         .allowedMethods("GET","POST","PUT","DELETE");
             }
