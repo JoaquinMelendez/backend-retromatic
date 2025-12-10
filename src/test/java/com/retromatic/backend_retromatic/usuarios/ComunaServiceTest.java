@@ -35,7 +35,6 @@ class ComunaServiceTest {
         comuna.setId(1L);
         comuna.setNombre("Providencia");
         
-        // Simulamos una región para que el objeto esté completo
         Region region = new Region();
         region.setId(1L);
         region.setNombre("Metropolitana");
